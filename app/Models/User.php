@@ -45,4 +45,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Balance::class);
     }
+
+    public function getAmount()
+    {
+        return $this->balance()->first()->amount;
+    }
 }

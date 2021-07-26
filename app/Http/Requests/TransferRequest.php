@@ -27,7 +27,7 @@ class TransferRequest extends FormRequest
     public function rules()
     {
         return [
-            'amount'   => [new ValidateIfPayerHaveValidAmountRule($this->payer_id)],
+            'amount'   => ['required','numeric',new ValidateIfPayerHaveValidAmountRule($this->payer_id)],
             'payee_id' => $this->getPayeeAndPayerValidation(),
             'payer_id' => $this->getPayeeAndPayerValidation()
         ];

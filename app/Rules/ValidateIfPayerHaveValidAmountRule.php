@@ -3,7 +3,7 @@
 namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
-
+use App\Models\User;
 class ValidateIfPayerHaveValidAmountRule implements Rule
 {
     /**
@@ -11,11 +11,11 @@ class ValidateIfPayerHaveValidAmountRule implements Rule
      *
      * @return void
      */
-    private $payerId;
+    private $payerAmount;
 
     public function __construct($payerId)
     {
-        $this->payerId = $payerId;
+        $this->payerAmount = User::find($payerId)->getAmount();
     }
 
     /**
@@ -27,7 +27,7 @@ class ValidateIfPayerHaveValidAmountRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        
+        return $value <= $this->payerAmount;
     }
 
     /**
@@ -37,6 +37,6 @@ class ValidateIfPayerHaveValidAmountRule implements Rule
      */
     public function message()
     {
-        return 'The validation error message.';
+        return __('Your balance is insufficient for this transaction');
     }
 }
