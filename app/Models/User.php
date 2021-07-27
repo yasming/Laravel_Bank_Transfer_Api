@@ -62,4 +62,18 @@ class User extends Authenticatable
     {
         return !$this->shopkeeper;
     }
+
+    public function removeBalance($amount)
+    {
+        $balance   = $this->balance()->first();
+        $newAmount = $balance->amount - $amount;
+        return $balance->update(['amount' => $newAmount]);
+    }
+
+    public function addBalance($amount)
+    {
+        $balance   = $this->balance()->first();
+        $newAmount = $balance->amount + $amount;
+        return $balance->update(['amount' => $newAmount]);
+    }
 }

@@ -37,4 +37,16 @@ class UserTest extends TestCase
         User::first()->update(['shopkeeper' => 0]);
         $this->assertEquals(!User::first()->shopkeeper, User::first()->isUser());
     }
+
+    public function test_it_should_add_balace()
+    {
+        User::first()->balance()->first()->update(['amount' => 100]);
+        $this->assertEquals(200, User::first()->addBalance(100));
+    }
+
+    public function test_it_should_remove_balace()
+    {
+        User::first()->balance()->first()->update(['amount' => 30]);
+        $this->assertEquals(20, User::first()->addBalance(10));
+    }
 }
