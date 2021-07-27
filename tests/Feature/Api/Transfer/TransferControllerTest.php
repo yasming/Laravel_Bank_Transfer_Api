@@ -92,7 +92,7 @@ class TransferControllerTest extends TestCase
         ];
     }
 
-    public function test_valid_amount_fields()
+    public function test_valid_amount_field()
     {
         $invalidAmount = User::first()->getAmount() + 10;
         $this->post(route('api.transfer'), [

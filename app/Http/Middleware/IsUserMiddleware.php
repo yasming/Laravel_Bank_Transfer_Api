@@ -18,7 +18,7 @@ class IsUserMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!$request->payer_id || User::find($request->payer_id)?->isShopkeeper()) {
+        if (User::find($request->payer_id)?->isShopkeeper()) {
 
             return response()->json([
                                         'message' => __('You are not allowed to access this route')

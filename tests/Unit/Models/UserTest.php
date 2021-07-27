@@ -31,4 +31,10 @@ class UserTest extends TestCase
         User::first()->update(['shopkeeper' => 1]);
         $this->assertEquals(User::first()->shopkeeper, User::first()->isShopkeeper());
     }
+
+    public function test_it_should_return_is_user()
+    {
+        User::first()->update(['shopkeeper' => 0]);
+        $this->assertEquals(!User::first()->shopkeeper, User::first()->isUser());
+    }
 }

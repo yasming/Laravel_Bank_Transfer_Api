@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Rules\ValidateIfPayerHaveValidAmountRule;
+use App\Rules\ValidateIfPayerIsUserRule;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Traits\FormatResponseFormRequest;
 
@@ -28,14 +29,8 @@ class TransferRequest extends FormRequest
     {
         return [
             'amount'   => ['required','numeric',new ValidateIfPayerHaveValidAmountRule($this->payer_id)],
-            'payee_id' => $this->getPayeeAndPayerValidation(),
-            'payer_id' => $this->getPayeeAndPayerValidation()
+            'payee_id' => ['required', 'numeric', 'exists:users,id', new ValidateIfPayerIsUserRule],
+            'payer_id' => 'required|numeric|exists:users,id'
         ];
     }
-
-    private function getPayeeAndPayerValidation()
-    {
-        return 'required|numeric|exists:users,id';
-    }
-
 }
