@@ -35,7 +35,7 @@ class TransferRequest extends FormRequest
 
     private function getPayeeAndPayerValidation()
     {
-        return ['required','numeric','exists:users,id'];
+        return 'required|numeric|exists:users,id';
     }
 
 }

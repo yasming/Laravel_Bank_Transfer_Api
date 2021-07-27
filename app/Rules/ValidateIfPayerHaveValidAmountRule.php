@@ -15,7 +15,7 @@ class ValidateIfPayerHaveValidAmountRule implements Rule
 
     public function __construct($payerId)
     {
-        $this->payerAmount = User::find($payerId)->getAmount();
+        $this->payerAmount = User::find($payerId)?->getAmount();
     }
 
     /**

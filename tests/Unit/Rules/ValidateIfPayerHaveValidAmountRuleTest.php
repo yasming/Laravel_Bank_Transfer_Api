@@ -4,13 +4,11 @@ namespace Tests\Unit\Rules;
 
 use Tests\TestCase;
 use App\Rules\ValidateIfPayerHaveValidAmountRule;
-use Illuminate\Http\Request;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\Models\User;
 
 class ValidateIfPayerHaveValidAmountRuleTest extends TestCase
 {
-
     use DatabaseMigrations;
     private $user;
     public function setUp(): void
@@ -26,7 +24,6 @@ class ValidateIfPayerHaveValidAmountRuleTest extends TestCase
         $rule   = new ValidateIfPayerHaveValidAmountRule($this->user->id);
         $amount = $this->user->getAmount() - 10;
         $return = $rule->passes('payer_id', $amount);
-        
         $this->assertTrue($return);
     }
 

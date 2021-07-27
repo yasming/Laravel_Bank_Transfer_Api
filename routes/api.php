@@ -19,4 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/transfer', TransferController::class);
+Route::post('/transfer', TransferController::class)->name('api.transfer');
