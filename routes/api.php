@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Transfer\TransferController;
+use App\Http\Middleware\IsUserMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,4 +20,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/transfer', TransferController::class)->name('api.transfer');
+Route::middleware([IsUserMiddleware::class])->group(function () {
+    Route::post('/transfer', TransferController::class)->name('api.transfer');
+});

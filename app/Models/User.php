@@ -52,4 +52,9 @@ class User extends Authenticatable
     {
         return $this->balance()->first()->amount;
     }
+
+    public function isShopkeeper()
+    {
+        return $this->shopkeeper;
+    }
 }

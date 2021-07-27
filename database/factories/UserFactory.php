@@ -22,31 +22,15 @@ class UserFactory extends Factory
      */
     public function definition()
     {
-        $cnpjOrCpf =  $this->getCnpjOrCpf();
         return [
             'name'              => $this->faker->name(),
             'email'             => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password'          => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token'    => Str::random(10),
-            'document'          => $cnpjOrCpf['document'],
-            'shopkeeper'        => $cnpjOrCpf['shopkeeper'],
+            'document'          => rand(10000,99999),
+            'shopkeeper'        => rand(0,1),
            
-        ];
-    }
-
-    private function getCnpjOrCpf()
-    {
-        $randomNumber = rand(0,1);
-        if ($randomNumber == 1) {
-            return [
-                'document'   => 42685676000106,
-                'shopkeeper' => true,
-            ];
-        }
-        return [
-            'document'   => 35334940049,
-            'shopkeeper' => true,
         ];
     }
 

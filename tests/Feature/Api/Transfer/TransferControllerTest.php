@@ -101,4 +101,16 @@ class TransferControllerTest extends TestCase
             'amount'  => [__('Your balance is insufficient for this transaction')],
         ])->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
+
+    public function test_is_shopkeeper_middleware()
+    {
+        $user = User::first();
+        $user->update(['shopkeeper' => true]);
+
+        $this->post(route('api.transfer'), [
+            'payer_id' => $user->id
+        ])->assertJson([
+            'message' => __('You are not allowed to access this route')
+        ])->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
 }

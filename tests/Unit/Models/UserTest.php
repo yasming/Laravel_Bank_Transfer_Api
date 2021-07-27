@@ -16,13 +16,19 @@ class UserTest extends TestCase
         $this->seed();
     }
 
-   public function test_it_should_return_user_balance_quantity()
-   {
-       $this->assertEquals(User::first()->balance()->count(), Balance::whereUserId(User::first()->id)->count());
-   }
+    public function test_it_should_return_user_balance_quantity()
+    {
+        $this->assertEquals(User::first()->balance()->count(), Balance::whereUserId(User::first()->id)->count());
+    }
 
-   public function test_it_should_return_user_balance_amount()
-   {
-       $this->assertEquals(User::first()->balance()->first()->amount, User::first()->getAmount());
-   }
+    public function test_it_should_return_user_balance_amount()
+    {
+        $this->assertEquals(User::first()->balance()->first()->amount, User::first()->getAmount());
+    }
+
+    public function test_it_should_return_is_shopkeeper()
+    {
+        User::first()->update(['shopkeeper' => 1]);
+        $this->assertEquals(User::first()->shopkeeper, User::first()->isShopkeeper());
+    }
 }
