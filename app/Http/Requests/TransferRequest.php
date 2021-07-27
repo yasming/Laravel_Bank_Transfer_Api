@@ -29,8 +29,8 @@ class TransferRequest extends FormRequest
     {
         return [
             'amount'   => ['required','numeric',new ValidateIfPayerHaveValidAmountRule($this->payer_id)],
-            'payee_id' => ['required', 'numeric', 'exists:users,id', new ValidateIfPayerIsUserRule],
-            'payer_id' => 'required|numeric|exists:users,id'
+            'payer_id' => ['required', 'numeric', 'exists:users,id', new ValidateIfPayerIsUserRule],
+            'payee_id' => 'required|numeric|exists:users,id'
         ];
     }
 }
