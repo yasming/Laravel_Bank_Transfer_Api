@@ -5,7 +5,7 @@ namespace Tests\Feature\Matches;
 use Tests\TestCase;
 use Illuminate\Http\Response;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-
+use App\Models\User;
 class TransferControllerTest extends TestCase
 {
     use DatabaseMigrations;
@@ -67,7 +67,7 @@ class TransferControllerTest extends TestCase
         ];
     }
 
-       /**
+    /**
      * @dataProvider getExistsFields
      *
      * @param string $field
@@ -90,5 +90,15 @@ class TransferControllerTest extends TestCase
             ['payee_id', rand(1000,9999) , 'payee id'],
             ['payer_id', rand(1000,9999) , 'payer id'],
         ];
+    }
+
+    public function test_valid_amount_fields()
+    {
+        $invalidAmount = User::first()->getAmount() + 10;
+        $this->post(route('api.transfer'), [
+            'amount' => $invalidAmount
+        ])->assertJson([
+            'amount'  => [__('Your balance is insufficient for this transaction')],
+        ])->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 }
