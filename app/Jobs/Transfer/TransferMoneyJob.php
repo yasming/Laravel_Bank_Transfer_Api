@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Repository\Transfer\TransferRepository;
 use Illuminate\Support\Facades\DB;
-
+use App\Models\Transfer;
 class TransferMoneyJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -21,12 +21,12 @@ class TransferMoneyJob implements ShouldQueue
     private $payeeId;
     private $amount;
     private $transferRepository;
-
+    
     public function __construct($request)
     {
-        $this->payerId            = $request['payer_id'];
-        $this->payeeId            = $request['payee_id'];
-        $this->amount             = $request['amount'];
+        $this->payerId = $request['payer_id'];
+        $this->payeeId = $request['payee_id'];
+        $this->amount  = $request['amount'];
     }
 
     /**
@@ -39,23 +39,33 @@ class TransferMoneyJob implements ShouldQueue
     {
         try {
             DB::beginTransaction();
+            
             $transferIsAuthorized = TransferExternalService::validateTransfer()->transferIsAuthorized();
+            $this->executeTransferIfIsAuthorized($transferIsAuthorized, $transferRepository);
 
-            if ($transferIsAuthorized) {
-                $this->transferRepository = $transferRepository;
-                $this->executeTransfer();
-            }
-
-            if (!$transferIsAuthorized) {
-                $this->logsTransactionNotAuthorized();  
-            }
             DB::commit();
+            SendNotificationTransferJob::dispatch(Transfer::SUCCESS);
         } catch (\Throwable $e) {
             DB::rollback();
+            $this->logJobFailed($e);
+            SendNotificationTransferJob::dispatch(Transfer::FAILURE);
+            throw new \Exception($e);
         }
     }
 
-    private function executeTransfer()
+    private function executeTransferIfIsAuthorized($transferIsAuthorized, $transferRepository) : void
+    {
+        if ($transferIsAuthorized) {
+            $this->transferRepository = $transferRepository;
+            $this->executeTransfer();
+        }
+
+        if (!$transferIsAuthorized) {
+            $this->logsTransactionNotAuthorized();  
+        }
+    }
+
+    private function executeTransfer() : void
     {
         $this->removeBalanceFromPayer();
         $this->addBalanceToPayee();
@@ -81,11 +91,17 @@ class TransferMoneyJob implements ShouldQueue
         ]);
     }
 
-    private function logsTransactionNotAuthorized()
+    private function logsTransactionNotAuthorized() : void
     {
-        Log::warning(__("Transfer not authorized"));
+        Log::warning(__('Transfer not authorized'));
         Log::info('payer_id: '.$this->payerId); 
         Log::info('payee_id: '.$this->payeeId); 
         Log::info('amount:   '.$this->amount); 
+    }
+
+    private function logJobFailed($e) : void
+    {
+        Log::info(__('-- Transcation failed --'));
+        Log::info('reason: '. json_encode($e));
     }
 }
