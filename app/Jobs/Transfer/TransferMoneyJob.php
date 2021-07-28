@@ -66,6 +66,15 @@ class TransferMoneyJob implements ShouldQueue
         User::find($this->payeeId)->addBalance($this->amount);
     }
 
+    // private function createTransfer() : void
+    // {
+    //     Transfer::create([
+    //         'payer_id' => $this->payerId,
+    //         'payee_id' => $this->payeeId,
+    //         'amount'   => $this->amount
+    //     ]);
+    // }
+
     private function logsTransactionNotAuthorized()
     {
         Log::warning(__("Transfer not authorized"));
