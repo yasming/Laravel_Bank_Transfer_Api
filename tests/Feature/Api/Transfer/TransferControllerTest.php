@@ -102,6 +102,19 @@ class TransferControllerTest extends TestCase
         ])->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
+    public function test_payee_and_payer_different()
+    {
+        $user = User::first();
+        $user->update(['shopkeeper' => false]);
+
+        $this->post(route('api.transfer'), [
+            'payer_id' => 1,
+            'payee_id' => 1,
+        ])->assertJson([
+            'payee_id'  => [__('validation.different', ['attribute' => 'payee id', 'other' => 'payer id'])],
+        ])->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
     public function test_is_shopkeeper_middleware()
     {
         $user = User::first();

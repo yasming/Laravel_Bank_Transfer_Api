@@ -30,7 +30,7 @@ class TransferRequest extends FormRequest
         return [
             'amount'   => ['required','numeric',new ValidateIfPayerHaveValidAmountRule($this->payer_id)],
             'payer_id' => ['required', 'numeric', 'exists:users,id', new ValidateIfPayerIsUserRule],
-            'payee_id' => 'required|numeric|exists:users,id'
+            'payee_id' => 'required|numeric|exists:users,id|different:payer_id'
         ];
     }
 }
