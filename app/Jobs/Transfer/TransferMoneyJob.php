@@ -10,6 +10,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
+use App\Repository\Transfer\TransferRepository;
+use Illuminate\Support\Facades\DB;
+
 class TransferMoneyJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -17,12 +20,13 @@ class TransferMoneyJob implements ShouldQueue
     private $payerId;
     private $payeeId;
     private $amount;
+    private $transferRepository;
 
     public function __construct($request)
     {
-        $this->payerId = $request['payer_id'];
-        $this->payeeId = $request['payee_id'];
-        $this->amount  = $request['amount'];
+        $this->payerId            = $request['payer_id'];
+        $this->payeeId            = $request['payee_id'];
+        $this->amount             = $request['amount'];
     }
 
     /**
@@ -31,21 +35,23 @@ class TransferMoneyJob implements ShouldQueue
      * @return void
     */
 
-    public function handle()
+    public function handle(TransferRepository $transferRepository)
     {
         try {
+            DB::beginTransaction();
             $transferIsAuthorized = TransferExternalService::validateTransfer()->transferIsAuthorized();
 
             if ($transferIsAuthorized) {
+                $this->transferRepository = $transferRepository;
                 $this->executeTransfer();
             }
 
             if (!$transferIsAuthorized) {
                 $this->logsTransactionNotAuthorized();  
             }
-
+            DB::commit();
         } catch (\Throwable $e) {
-            
+            DB::rollback();
         }
     }
 
@@ -53,7 +59,7 @@ class TransferMoneyJob implements ShouldQueue
     {
         $this->removeBalanceFromPayer();
         $this->addBalanceToPayee();
-        // $this->createTransfer();
+        $this->createTransfer();
     }
 
     private function removeBalanceFromPayer() : void
@@ -66,14 +72,14 @@ class TransferMoneyJob implements ShouldQueue
         User::find($this->payeeId)->addBalance($this->amount);
     }
 
-    // private function createTransfer() : void
-    // {
-    //     Transfer::create([
-    //         'payer_id' => $this->payerId,
-    //         'payee_id' => $this->payeeId,
-    //         'amount'   => $this->amount
-    //     ]);
-    // }
+    private function createTransfer() : void
+    {
+        $this->transferRepository->create([
+            'payer_id' => $this->payerId,
+            'payee_id' => $this->payeeId,
+            'amount'   => $this->amount
+        ]);
+    }
 
     private function logsTransactionNotAuthorized()
     {
