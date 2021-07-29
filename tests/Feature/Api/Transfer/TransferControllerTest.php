@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Matches;
+namespace Tests\Feature\Api\Transfer;
 
 use Tests\TestCase;
 use Illuminate\Http\Response;

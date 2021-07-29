@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Jobs;
+namespace Tests\Unit\Commands;
 
 use App\Console\Commands\RunJobFailedsCommand;
 use Tests\TestCase;
