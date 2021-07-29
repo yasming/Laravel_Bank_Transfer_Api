@@ -18,9 +18,10 @@ class TransferMoneyJobTest extends TestCase
         parent::setUp();
         $this->seed();
         Config::set('external_services.mock_transfer','https://run.mocky.io/v3/8fafdd68-a090-496f-8c9a-3442cf30dae6');
-    }
+        Config::set('external_services.mock_notification','http://o4d9z.mocklab.io/notify');
+        }
 
-    public function test_it_should_create_a_new_session_in_database()
+    public function test_it_should_create_a_new_transfer_in_database()
     {
         $mock               = $this->mockApiRequest();
         $oldAmountPayer     = User::find(1)->balance()->first()->amount;

@@ -35,12 +35,11 @@ class SendNotificationTransferJob implements ShouldQueue
             if (!$notificationSended) {
                 throw new \Exception(__('External service is not available.'));
             }
-
+            Log::info(_('Notification sended'));
         }  catch (\Throwable $e) {
             $this->logJobFailed($e);
             throw new \Exception($e);
         }
-      
     }
 
     private function logJobFailed($e = null) : void
