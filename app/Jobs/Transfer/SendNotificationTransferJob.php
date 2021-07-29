@@ -9,7 +9,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use App\Models\Transfer;
 class SendNotificationTransferJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -42,8 +41,6 @@ class SendNotificationTransferJob implements ShouldQueue
     private function logJobFailed($e = null) : void
     {
         Log::warning(__('Notification not sended'));
-        if ($e) {
-            Log::info('reason: '. json_encode($e));
-        }
+        Log::info('reason: '. json_encode($e));
     }
 }
