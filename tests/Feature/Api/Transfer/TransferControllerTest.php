@@ -6,6 +6,11 @@ use Tests\TestCase;
 use Illuminate\Http\Response;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\Models\User;
+use Illuminate\Support\Facades\Queue;
+use App\Jobs\Transfer\TransferMoneyJob;
+use App\Jobs\Transfer\SendNotificationTransferJob;
+use App\Models\Transfer;
+
 class TransferControllerTest extends TestCase
 {
     use DatabaseMigrations;
@@ -125,5 +130,25 @@ class TransferControllerTest extends TestCase
         ])->assertJson([
             'message' => __('You are not allowed to access this route')
         ])->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    public function test_it_should_be_able_to_process_a_transfer()
+    {
+        Queue::fake();
+        $user = User::first();
+        $user->update(['shopkeeper' => false]);
+
+        $this->post(route('api.transfer'), [
+            'amount'   => 100,
+            'payer_id' => 1,
+            'payee_id' => 2
+        ])->assertJson([
+            'message' => __('Your transfer is being processed !')
+        ])->assertStatus(Response::HTTP_OK);
+        Queue::assertPushed(TransferMoneyJob::class);
+        Queue::assertPushed(TransferMoneyJob::class, 1);
+        Queue::assertPushedWithChain(TransferMoneyJob::class, [
+            SendNotificationTransferJob::class,
+        ]);
     }
 }

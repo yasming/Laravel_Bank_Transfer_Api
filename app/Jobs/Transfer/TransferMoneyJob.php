@@ -45,11 +45,9 @@ class TransferMoneyJob implements ShouldQueue
             $this->executeTransferIfIsAuthorized($transferIsAuthorized, $transferRepository);
 
             DB::commit();
-            SendNotificationTransferJob::dispatch(Transfer::SUCCESS);
         } catch (\Throwable $e) {
             DB::rollback();
             $this->logJobFailed($e);
-            SendNotificationTransferJob::dispatch(Transfer::FAILURE);
             throw new \Exception($e);
         }
     }

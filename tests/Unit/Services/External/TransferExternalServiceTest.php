@@ -6,7 +6,6 @@ use App\Facades\Services\TransferExternalService;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Config;
-
 class TransferExternalServiceTest extends TestCase
 {
     use DatabaseMigrations;

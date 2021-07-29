@@ -6,7 +6,6 @@ use App\Facades\Services\SendNotificationExternalService;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Config;
-
 class SendNotificationExternalServiceTest extends TestCase
 {
     use DatabaseMigrations;

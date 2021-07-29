@@ -14,12 +14,9 @@ class SendNotificationTransferJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $status;
-    private $transactionId;
-
-    public function __construct($status)
+    public function __construct()
     {
-        $this->status = $status;
+
     }
 
     /**
@@ -44,14 +41,7 @@ class SendNotificationTransferJob implements ShouldQueue
 
     private function logJobFailed($e = null) : void
     {
-        if ($this->status == Transfer::FAILURE) {
-            Log::warning(__('Notification not send for transaction failure'));
-        }
-
-        if ($this->status == Transfer::SUCCESS) {
-            Log::warning(__('Notification not send for transaction successfully'));
-        }
-
+        Log::warning(__('Notification not sended'));
         if ($e) {
             Log::info('reason: '. json_encode($e));
         }
