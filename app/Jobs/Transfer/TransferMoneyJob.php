@@ -21,7 +21,8 @@ class TransferMoneyJob implements ShouldQueue
     private $payeeId;
     private $amount;
     private $transferRepository;
-    
+    private $transcationId;
+
     public function __construct($request)
     {
         $this->payerId = $request['payer_id'];
@@ -84,11 +85,12 @@ class TransferMoneyJob implements ShouldQueue
 
     private function createTransfer() : void
     {
-        $this->transferRepository->create([
+        $transcation = $this->transferRepository->create([
             'payer_id' => $this->payerId,
             'payee_id' => $this->payeeId,
             'amount'   => $this->amount
         ]);
+        $this->transactionId = $transcation->id;
     }
 
     private function logsTransactionNotAuthorized() : void

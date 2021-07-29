@@ -2,22 +2,20 @@
 
 namespace App\Jobs\Transfer;
 
-use App\Facades\Services\TransferExternalService;
+use App\Facades\Services\SendNotificationExternalService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use App\Models\User;
-use App\Repository\Transfer\TransferRepository;
-use Illuminate\Support\Facades\DB;
-
+use App\Models\Transfer;
 class SendNotificationTransferJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private $status;
+    private $transactionId;
 
     public function __construct($status)
     {
@@ -32,17 +30,32 @@ class SendNotificationTransferJob implements ShouldQueue
 
     public function handle()
     {
-        $notificationSended = SendNotificationTransferJob::sendNotification()->notificationSended();
-        if (!$notificationSended) {
+        try {
+            $notificationSended = SendNotificationExternalService::sendNotification()->notificationSended();
+            $notificationSended = false;
+            if (!$notificationSended) {
+                throw new \Exception(__('External service is not available.'));
+            }
 
+        }  catch (\Throwable $e) {
+            $this->logJobFailed($e);
+            throw new \Exception($e);
         }
+      
     }
 
-    private function logsNotificationNotSended() : void
+    private function logJobFailed($e = null) : void
     {
-        Log::warning(__('Transfer not authorized'));
-        Log::info('payer_id: '.$this->payerId); 
-        Log::info('payee_id: '.$this->payeeId); 
-        Log::info('amount:   '.$this->amount); 
+        if ($this->status == Transfer::FAILURE) {
+            Log::warning(__('Notification not send for transaction failure'));
+        }
+
+        if ($this->status == Transfer::SUCCESS) {
+            Log::warning(__('Notification not send for transaction successfully'));
+        }
+
+        if ($e) {
+            Log::info('reason: '. json_encode($e));
+        }
     }
 }
