@@ -32,7 +32,6 @@ class SendNotificationTransferJob implements ShouldQueue
     {
         try {
             $notificationSended = SendNotificationExternalService::sendNotification()->notificationSended();
-            $notificationSended = false;
             if (!$notificationSended) {
                 throw new \Exception(__('External service is not available.'));
             }
