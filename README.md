@@ -8,7 +8,7 @@ This project is an api to effectivate a bank transfer between two users, using q
 Docker
 ```
 
-### API Postman Collection / documentation
+### API Postman Collection / Documentation
 
 ```
 https://www.getpostman.com/collections/3c0827e291b37a5ff42f
