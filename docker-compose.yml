@@ -8,9 +8,45 @@ services:
         - mysql-network
     depends_on: 
         - mysql
-        
+  nginx:
+    image: ambientum/php:8.0-nginx
+    volumes:
+      - ./:/var/www/app
+    ports: 
+      - 80:8080
+    depends_on: 
+      - dependencies_installation
+      - redis
+      - mysql
+    networks:
+      - redis-network
+      - mysql-network   
+
+  horizon:
+    image: ambientum/php:8.0
+    command: php artisan horizon
+    volumes:
+      - .:/var/www/app
+    depends_on: 
+      - dependencies_installation
+      - redis
+    networks:
+      - redis-network
+      - mysql-network
+
+  redis:
+    image: redis
+    container_name: bank_transfer_redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ./docker/redis/data_container:/data
+    networks:
+      - redis-network
+
   mysql:
     image: mysql:latest
+    container_name: bank_transfer_mysql
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_ROOT_PASSWORD: 
@@ -21,6 +57,9 @@ services:
       - mysql-network
     ports:
       - "3306:3306"
+
 networks: 
   mysql-network: 
+    driver: bridge
+  redis-network:
     driver: bridge
