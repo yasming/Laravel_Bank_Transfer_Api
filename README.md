@@ -1,6 +1,6 @@
 # Bank_Transfer_Api
 
-This project is an api to effectivate a bank transfer between two users.
+This project is an api to effectivate a bank transfer between two users, using queue to make the process more consistent and safe.
 
 ## Prerequisites
 
