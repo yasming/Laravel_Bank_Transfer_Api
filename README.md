@@ -17,10 +17,6 @@ https://www.getpostman.com/collections/3c0827e291b37a5ff42f
 ### How to run project's locally
 
 ```
-after clone the project
-```
-
-```
 docker-compose up
 ```
 
