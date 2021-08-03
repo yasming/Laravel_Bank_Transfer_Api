@@ -147,8 +147,5 @@ class TransferControllerTest extends TestCase
         ])->assertStatus(Response::HTTP_OK);
         Queue::assertPushed(TransferMoneyJob::class);
         Queue::assertPushed(TransferMoneyJob::class, 1);
-        Queue::assertPushedWithChain(TransferMoneyJob::class, [
-            SendNotificationTransferJob::class,
-        ]);
     }
 }

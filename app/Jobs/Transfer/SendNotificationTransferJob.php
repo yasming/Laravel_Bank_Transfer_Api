@@ -13,9 +13,15 @@ class SendNotificationTransferJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct()
-    {
+    private $payerId;
+    private $payeeId;
+    private $amount;
 
+    public function __construct(int $payerId, int $payeeId, int $amount)
+    {
+        $this->payerId = $payerId;
+        $this->payeeId = $payeeId;
+        $this->amount  = $amount;
     }
 
     /**
@@ -31,7 +37,7 @@ class SendNotificationTransferJob implements ShouldQueue
             if (!$notificationSended) {
                 throw new \Exception(__('External service is not available.'));
             }
-            Log::info(_('Notification sended'));
+            $this->logJobSuccess();
         }  catch (\Throwable $e) {
             $this->logJobFailed($e);
             throw new \Exception($e);
@@ -42,5 +48,12 @@ class SendNotificationTransferJob implements ShouldQueue
     {
         Log::warning(__('Notification not sended'));
         Log::info('reason: '. json_encode($e));
+    }
+
+    private function logJobSuccess() : void
+    {
+        Log::info(
+            _('Notification sended, payee_id: '.$this->payeeId.' payer_id: '.$this->payerId.' amount: '.$this->amount)
+        );
     }
 }

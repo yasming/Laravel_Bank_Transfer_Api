@@ -21,11 +21,11 @@ class SendNotificationTransferJobTest extends TestCase
     public function test_it_should_send_notification()
     {
         file_put_contents(storage_path('logs/laravel.log'),'');
-        $job                = (new SendNotificationTransferJob);
+        $job                = new SendNotificationTransferJob(1,2,100);
         $job->handle();
 
         $logs       = file_get_contents(storage_path('logs/laravel.log'),'');
-        $logCreated = strpos($logs,'testing.INFO: Notification sended') != false ? true : false;
+        $logCreated = strpos($logs,'testing.INFO: Notification sended, payee_id: 2 payer_id: 1 amount: 100') != false ? true : false;
         $this->assertTrue($logCreated);
     }
 
