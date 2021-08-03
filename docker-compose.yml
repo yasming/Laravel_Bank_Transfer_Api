@@ -10,6 +10,7 @@ services:
         - mysql
   nginx:
     image: ambientum/php:8.0-nginx
+    container_name: bank_transfer_nginx
     volumes:
       - ./:/var/www/app
     ports: 
