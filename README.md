@@ -30,6 +30,7 @@ After all containers be built the project will be able to access on localhost:80
 
 ```
 To run project's test is need to do:
+
 1. docker exec -it bank_transfer_nginx /bin/bash
 2. php artisan test
 ```
